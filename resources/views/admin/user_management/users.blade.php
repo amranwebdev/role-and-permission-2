@@ -1,16 +1,27 @@
 @extends('layouts.master')
 @section('content')
+@section('pagecss')
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" />
+    <style>
+        .select2-container {
+            width: 100% !important;
+        }
+        .select2-dropdown {
+            z-index:99999;
+        }
+    </style>
+@endsection
 
 <div class="container-fluid">
             <div class="row align-items-center">
                 <div class="col-6">
                     <h1 class="dashboard-title">Users</h1>
                 </div>
-                @if(Auth::user()->is_super_admin==1 )
+                @can('admin-create')
                 <div class="col-6 dashboard-title text-end">
                     <button data-bs-toggle="modal" data-bs-target="#userAddModal" class="btn-outline">+ Add User</button>
                 </div>
-                @endif
+                @endcan
             </div>
         </div>
 
@@ -34,11 +45,11 @@
                                             class="table table-borderless align-middle text-center dashboardTable customTable" id="userTable">
                                             <thead>
                                                 <tr >
-                                                    <th scope="col">Role</th>
+                                                    <!-- <th scope="col">Role</th> -->
                                                     <th scope="col">Name</th>
                                                     <th scope="col">Email</th>
                                                     <th scope="col">Registered</th>
-                                                    <th scope="col">Is Admin</th>
+                                                    <!-- <th scope="col">Is Admin</th> -->
                                                     <th scope="col" class="text-center">Actions</th>
                                                 </tr>
                                             </thead>
@@ -49,55 +60,40 @@
                                                 @foreach($users as $user)
 
                                                  <tr class="item{{ $user->id }}">
-                                                    @if($user->is_admin==1)
-                                                 <td class="change_role{{$user->id}}">Admin</td>
-                                                 
-                                                     @else
-                                                     <td class="change_role{{$user->id}}">User</td>
-                                                     @endif
+
+                                                    <!-- @if($user->is_admin==1)
+                                                    <td class="change_role{{$user->id}}">Admin</td>
+                                                    @else
+                                                    <td class="change_role{{$user->id}}">N/A</td>
+                                                    @endif -->
 
 
                                                    
                                                     <td>{{$user->name}}</td>
                                                     <td>{{$user->email}}</td>
-                                                     @if($user->is_verified==1)
-                                                     <td class="verified_status{{$user->id}}"><span class="acceptStatus"><svg
-                                                                xmlns="http://www.w3.org/2000/svg" width="16"
-                                                                height="16" fill="none" viewBox="0 0 16 16">
-                                                                <path fill="#6FCF97" fill-rule="evenodd"
-                                                                    d="M13.805 4.329c.26.26.26.682 0 .942L6.47 12.605a.667.667 0 01-.942 0L2.195 9.27a.667.667 0 11.943-.942L6 11.19l6.862-6.861c.26-.26.682-.26.943 0z"
-                                                                    clip-rule="evenodd" />
-                                                            </svg>
-                                                            Registered</span></td>
-                                                     @else
-                                                     <td class="verified_status{{$user->id}}"> <span class="pendingStatus">
-                                                            <svg xmlns="http://www.w3.org/2000/svg" width="16"
-                                                                height="16" fill="none" viewBox="0 0 16 16">
-                                                                <path fill="#F2C94C" fill-rule="evenodd"
-                                                                    d="M8 2a6 6 0 100 12A6 6 0 008 2zM.667 8a7.333 7.333 0 1114.666 0A7.333 7.333 0 01.667 8z"
-                                                                    clip-rule="evenodd" />
-                                                                <path fill="#F2C94C" fill-rule="evenodd"
-                                                                    d="M8 3.333c.368 0 .667.299.667.667v3.588l2.298 1.149a.667.667 0 11-.597 1.193L7.702 8.596A.667.667 0 017.333 8V4c0-.368.299-.667.667-.667z"
-                                                                    clip-rule="evenodd" />
-                                                            </svg>
-                                                            PENDING</span></td>
-                                                    @endif
+                                                    <td class="verified_status{{$user->id}}"><span class="acceptStatus">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 16 16">
+                                                         <path fill="#6FCF97" fill-rule="evenodd" d="M13.805 4.329c.26.26.26.682 0 .942L6.47 12.605a.667.667 0 01-.942 0L2.195 9.27a.667.667 0 11.943-.942L6 11.19l6.862-6.861c.26-.26.682-.26.943 0z" clip-rule="evenodd" />
+                                                        </svg>Registered</span>
+                                                    </td>
+                                                     
 
-                                                    <td><div
+                                                    <!-- <td>
+                                                        <div
                                                             class="form-check form-switch d-flex justify-content-center">
                                                             <input class="form-check-input is_admin status{{ $user->id }}"  type="checkbox" {{ Auth::user()->is_super_admin!==1 ? 'disabled' : '' }} {{ $user->is_admin==1 ? 'checked' : '' }} {{ Auth::user()->id==$user->id ? 'disabled' : '' }} data-id="{{$user->id}}">
-                                                        </div></td>
+                                                        </div>
+                                                    </td> -->
                                                    
                                                     <td class="actionBtn text-center">
-                                                        <button 
-                                                         @if($user->is_verified==1) onclick='viewUser({{ $user->id }})' @else disabled @endif><svg xmlns="http://www.w3.org/2000/svg" width="24"
+                                                        <button onclick='viewUser({{ $user->id }})' ><svg xmlns="http://www.w3.org/2000/svg" width="24"
                                                                 height="24" fill="none" viewBox="0 0 24 24">
                                                                 <path fill="#BDBDBD"
                                                                     d="M21.92 11.6C19.9 6.91 16.1 4 12 4s-7.9 2.91-9.92 7.6a1 1 0 000 .8C4.1 17.09 7.9 20 12 20s7.9-2.91 9.92-7.6a1 1 0 000-.8zM12 18c-3.17 0-6.17-2.29-7.9-6C5.83 8.29 8.83 6 12 6s6.17 2.29 7.9 6c-1.73 3.71-4.73 6-7.9 6zm0-10a4 4 0 100 8 4 4 0 000-8zm0 6a2 2 0 110-4 2 2 0 010 4z" />
                                                             </svg>
                                                         </button>
-                                                        @if(Auth::user()->is_super_admin==1 )
-                                                        <button  @if($user->is_verified==1)  onclick='editUser({{ $user->id }})' @else disabled @endif><svg xmlns="http://www.w3.org/2000/svg" width="24"
+                                                       
+                                                        <button  onclick='editUser({{ $user->id }})'><svg xmlns="http://www.w3.org/2000/svg" width="24"
                                                                 height="24" fill="none" viewBox="0 0 24 24">
                                                                 <path fill="#BDBDBD"
                                                                     d="M5 18h4.24a1 1 0 00.71-.29l6.92-6.93L19.71 8a1 1 0 000-1.42l-4.24-4.29a1 1 0 00-1.42 0l-2.82 2.83-6.94 6.93a.999.999 0 00-.29.71V17a1 1 0 001 1zm9.76-13.59l2.83 2.83-1.42 1.42-2.83-2.83 1.42-1.42zM6 13.17l5.93-5.93 2.83 2.83L8.83 16H6v-2.83zM21 20H3a1 1 0 100 2h18a1 1 0 000-2z" />
@@ -111,7 +107,7 @@
                                                             </svg>
 
                                                         </button>
-                                                        @endif
+                                                        
                                                     </td>
                                                 </tr>
                                                 @endforeach
@@ -164,11 +160,22 @@
                             <label for="email">Email</label>
                             <input class="form-control" type="email" placeholder="User Email"  name="email">
                         </div>
-                       <div class="col-6">
+                       <!-- <div class="col-6">
                             <div class="form-check form-check-inline form-input">
                                 <input class="form-check-input" type="checkbox" id="Admin" name="admin" value="1">
                                 <label class="form-check-label" for="Admin">Admin</label>
                             </div>
+                        </div> -->
+
+                        <div class="col-12 form-input">
+                            <label for="roles[]" class="col-sm-4 col-form-label">Role</label>
+                            <select multiple="multiple" name="roles[]" class="form-control roles" id='test_tag'>
+                              
+                                @foreach ($roles as $role)
+                                    <option value="{{$role->name}}">{{$role->name}}</option>
+                                @endforeach
+                            </select>
+                            <label id="roles[]-error" class="error mt-2 text-danger" for="roles[]"></label>
                         </div>
 
 
@@ -225,11 +232,22 @@
                                
                             </select>
                         </div>
-                        <div class="col-6">
+                        <!-- <div class="col-6">
                             <div class="form-check form-check-inline form-input">
                                 <input class="form-check-input admin_checkbox" type="checkbox" id="Admin_edit" name="admin" value="1">
                                 <label class="form-check-label " for="Admin_edit">Admin</label>
                             </div>
+                        </div> -->
+
+                        <div class="col-12 form-input">
+                            <label for="roles[]" class="col-sm-4 col-form-label">Role</label>
+                            <select multiple="multiple" name="roles[]" class="form-control roles" id='e_roles'>
+                              
+                                @foreach ($roles as $role)
+                                    <option value="{{$role->name}}">{{$role->name}}</option>
+                                @endforeach
+                            </select>
+                            <label id="roles[]-error" class="error mt-2 text-danger" for="roles[]"></label>
                         </div>
                      
                           <div class="col-12 form-input">
@@ -303,6 +321,7 @@
 @endsection
 
 @section('pageScripts')
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
 <script>
        var toastMixin = Swal.mixin({
             toast: true,
@@ -332,6 +351,7 @@
                 "ordering": false,
                 scrollX: true,
             });
+            $('.roles').select2();
             // dropify table
             $('.dropify').dropify();
         });
@@ -454,41 +474,41 @@
                             "" + response.data.name + "",
                             "" + response.data.email + "",
                            `<td class="verified_status${response.data.id}"> <span class="pendingStatus">
-                                                            <svg xmlns="http://www.w3.org/2000/svg" width="16"
-                                                                height="16" fill="none" viewBox="0 0 16 16">
-                                                                <path fill="#F2C94C" fill-rule="evenodd"
-                                                                    d="M8 2a6 6 0 100 12A6 6 0 008 2zM.667 8a7.333 7.333 0 1114.666 0A7.333 7.333 0 01.667 8z"
-                                                                    clip-rule="evenodd" />
-                                                                <path fill="#F2C94C" fill-rule="evenodd"
-                                                                    d="M8 3.333c.368 0 .667.299.667.667v3.588l2.298 1.149a.667.667 0 11-.597 1.193L7.702 8.596A.667.667 0 017.333 8V4c0-.368.299-.667.667-.667z"
-                                                                    clip-rule="evenodd" />
-                                                            </svg>
-                                                            PENDING</span></td>`,
-                                                            `<div
-                                                            class="form-check form-switch d-flex justify-content-center">
-                                                            <input class="form-check-input is_admin status${response.data.id}" ${response.data.role=='Admin'?'checked':''} ${response.data.is_super_admin!==1?'disabled':''} type="checkbox" data-id="${response.data.id}">
-                                                        </div>`,
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16"
+                                    height="16" fill="none" viewBox="0 0 16 16">
+                                    <path fill="#F2C94C" fill-rule="evenodd"
+                                        d="M8 2a6 6 0 100 12A6 6 0 008 2zM.667 8a7.333 7.333 0 1114.666 0A7.333 7.333 0 01.667 8z"
+                                        clip-rule="evenodd" />
+                                    <path fill="#F2C94C" fill-rule="evenodd"
+                                        d="M8 3.333c.368 0 .667.299.667.667v3.588l2.298 1.149a.667.667 0 11-.597 1.193L7.702 8.596A.667.667 0 017.333 8V4c0-.368.299-.667.667-.667z"
+                                        clip-rule="evenodd" />
+                                </svg>
+                                PENDING</span></td>`,
+                                `<div
+                                class="form-check form-switch d-flex justify-content-center">
+                                <input class="form-check-input is_admin status${response.data.id}" ${response.data.role=='Admin'?'checked':''} ${response.data.is_super_admin!==1?'disabled':''} type="checkbox" data-id="${response.data.id}">
+                            </div>`,
                             `
                             <button  onclick='viewUser(${response.data.id})' disabled><svg xmlns="http://www.w3.org/2000/svg" width="24"
-                                                                height="24" fill="none" viewBox="0 0 24 24">
-                                                                <path fill="#BDBDBD"
-                                                                    d="M21.92 11.6C19.9 6.91 16.1 4 12 4s-7.9 2.91-9.92 7.6a1 1 0 000 .8C4.1 17.09 7.9 20 12 20s7.9-2.91 9.92-7.6a1 1 0 000-.8zM12 18c-3.17 0-6.17-2.29-7.9-6C5.83 8.29 8.83 6 12 6s6.17 2.29 7.9 6c-1.73 3.71-4.73 6-7.9 6zm0-10a4 4 0 100 8 4 4 0 000-8zm0 6a2 2 0 110-4 2 2 0 010 4z" />
-                                                            </svg>
-                                                        </button>
-                                                        <button disabled onclick='editUser(${response.data.id})'><svg xmlns="http://www.w3.org/2000/svg" width="24"
-                                                                height="24" fill="none" viewBox="0 0 24 24">
-                                                                <path fill="#BDBDBD"
-                                                                    d="M5 18h4.24a1 1 0 00.71-.29l6.92-6.93L19.71 8a1 1 0 000-1.42l-4.24-4.29a1 1 0 00-1.42 0l-2.82 2.83-6.94 6.93a.999.999 0 00-.29.71V17a1 1 0 001 1zm9.76-13.59l2.83 2.83-1.42 1.42-2.83-2.83 1.42-1.42zM6 13.17l5.93-5.93 2.83 2.83L8.83 16H6v-2.83zM21 20H3a1 1 0 100 2h18a1 1 0 000-2z" />
-                                                            </svg>
+                                    height="24" fill="none" viewBox="0 0 24 24">
+                                    <path fill="#BDBDBD"
+                                        d="M21.92 11.6C19.9 6.91 16.1 4 12 4s-7.9 2.91-9.92 7.6a1 1 0 000 .8C4.1 17.09 7.9 20 12 20s7.9-2.91 9.92-7.6a1 1 0 000-.8zM12 18c-3.17 0-6.17-2.29-7.9-6C5.83 8.29 8.83 6 12 6s6.17 2.29 7.9 6c-1.73 3.71-4.73 6-7.9 6zm0-10a4 4 0 100 8 4 4 0 000-8zm0 6a2 2 0 110-4 2 2 0 010 4z" />
+                                </svg>
+                            </button>
+                            <button disabled onclick='editUser(${response.data.id})'><svg xmlns="http://www.w3.org/2000/svg" width="24"
+                                    height="24" fill="none" viewBox="0 0 24 24">
+                                    <path fill="#BDBDBD"
+                                        d="M5 18h4.24a1 1 0 00.71-.29l6.92-6.93L19.71 8a1 1 0 000-1.42l-4.24-4.29a1 1 0 00-1.42 0l-2.82 2.83-6.94 6.93a.999.999 0 00-.29.71V17a1 1 0 001 1zm9.76-13.59l2.83 2.83-1.42 1.42-2.83-2.83 1.42-1.42zM6 13.17l5.93-5.93 2.83 2.83L8.83 16H6v-2.83zM21 20H3a1 1 0 100 2h18a1 1 0 000-2z" />
+                                </svg>
 
-                                                        </button>
-                                                        <button onclick='deletePerson(${response.data.id})'><svg xmlns="http://www.w3.org/2000/svg" width="24"
-                                                                height="24" fill="none" viewBox="0 0 24 24">
-                                                                <path fill="#EB5757"
-                                                                    d="M10 16.8a1 1 0 001-1v-6a1 1 0 00-2 0v6a1 1 0 001 1zm10-12h-4v-1a3 3 0 00-3-3h-2a3 3 0 00-3 3v1H4a1 1 0 000 2h1v11a3 3 0 003 3h8a3 3 0 003-3v-11h1a1 1 0 100-2zm-10-1a1 1 0 011-1h2a1 1 0 011 1v1h-4v-1zm7 14a1 1 0 01-1 1H8a1 1 0 01-1-1v-11h10v11zm-3-1a1 1 0 001-1v-6a1 1 0 00-2 0v6a1 1 0 001 1z" />
-                                                            </svg>
+                            </button>
+                            <button onclick='deletePerson(${response.data.id})'><svg xmlns="http://www.w3.org/2000/svg" width="24"
+                                    height="24" fill="none" viewBox="0 0 24 24">
+                                    <path fill="#EB5757"
+                                        d="M10 16.8a1 1 0 001-1v-6a1 1 0 00-2 0v6a1 1 0 001 1zm10-12h-4v-1a3 3 0 00-3-3h-2a3 3 0 00-3 3v1H4a1 1 0 000 2h1v11a3 3 0 003 3h8a3 3 0 003-3v-11h1a1 1 0 100-2zm-10-1a1 1 0 011-1h2a1 1 0 011 1v1h-4v-1zm7 14a1 1 0 01-1 1H8a1 1 0 01-1-1v-11h10v11zm-3-1a1 1 0 001-1v-6a1 1 0 00-2 0v6a1 1 0 001 1z" />
+                                </svg>
 
-                                                        </button>
+                            </button>
                             `
                         ]).draw().node();
                         $(trDOM).addClass('item' + response.data.id + '');
@@ -548,11 +568,11 @@
                if (response.success==true) {
 
                 $('#view_name').text(response.data.name);
-                if (response.data.is_admin==1) {
-                     $('#view_role').text("Admin");
-                }else{
-                     $('#view_role').text('User');
-                }
+                // if (response.data.is_admin==1) {
+                //      $('#view_role').text("Admin");
+                // }else{
+                //      $('#view_role').text('User');
+                // }
                
                 // $('#view_person').text(response.data.family_name);
                 $('#view_email').text(response.data.email);
@@ -561,7 +581,11 @@
                 // $('#view_image').text(response.data.name);
                  var img_url = imagesUrl+'/'+response.data.photo;
                 $("#view_image").attr("src",img_url);  
-                
+                $('#view_role').empty();
+                $.each(response.userRole, function (key, value) {
+                    $('#view_role').append(`<span>${value}</span>,&nbsp;&nbsp;`);
+                    //console.log(value);
+                })
                 
                 // $('#hidden_id').val(response.data.id);
                   
@@ -594,11 +618,18 @@
                 $('#edit_email').val(response.data.email);
                 $('#edit_gender').val(response.data.gender);
                 $('#hidden_id').val(response.data.id);
-                if (response.data.is_admin == 1) {
-                    $('.admin_checkbox').prop('checked', true);
-                } else {
-                    $('.admin_checkbox').prop('checked', false);
-                } 
+                $('#e_roles').select2();
+                var roles_update=[];
+                    $.each(response.userRole, function(key,value){
+                    roles_update.push(value)
+                    }); 
+                $('#e_roles').val(roles_update);
+                $('#e_roles').trigger('change');
+                // if (response.data.is_admin == 1) {
+                //     $('.admin_checkbox').prop('checked', true);
+                // } else {
+                //     $('.admin_checkbox').prop('checked', false);
+                // } 
 
 
                        if(response.data.photo){

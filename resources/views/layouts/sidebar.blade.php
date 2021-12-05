@@ -12,7 +12,7 @@
                 </button>
             </li>           
           
-
+            @hasanyrole('Superadmin|Admin')
             <li class="sideLi">
                 <button type="button" data-target="expandSidebar2" data-bs-toggle="tooltip" data-bs-placement="right"
                     title="User Management">
@@ -21,6 +21,7 @@
                     </svg>
                 </button>
             </li>
+            @endhasanyrole
 
             <li class="sideLi">
                 <button  type="button" data-target="expandSidebar3" data-bs-toggle="tooltip" data-bs-placement="right"
@@ -67,9 +68,9 @@
             <li>
                 <a href="{{route('users')}}">All Users</a>
             </li> 
-            <li>
+            <!-- <li>
                 <a href="{{route('admins')}}">All Admins</a>
-            </li>                    
+            </li>                     -->
         </ul>
 
         <!-- Expansion Sidebar -->
@@ -127,8 +128,30 @@
 
         <!-- Expansion Sidebar -->
         <ul class="expansion-sidebar" id="expandSidebar5">
+            @hasanyrole('Superadmin|Admin')
+            <li class="multilevelMenu">
+                <a href="#">Permission Management 
+                    <svg class="arrowIcon " xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none"
+                        viewBox="0 0 24 24">
+                        <path fill="#828282" d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6-6-6z" />
+                    </svg>
+                </a>
+                <!-- Sub Menu -->
+                <ul class="d-none">
+                    <li>
+                        <a href="{{route('permission.groups')}}">Permission Group</a>
+                    </li>
+                    <li>
+                        <a href="{{route('permissions')}}">Permission</a>
+                    </li>                   
+                </ul>
+            </li> 
             <li>
                 <a href="{{route('roles.with.permission')}}">Role Management</a>
+            </li>
+            @endhasanyrole
+            <li>
+                <a href="{{route('blogs')}}">Blog Management</a>
             </li>
         
         </ul>

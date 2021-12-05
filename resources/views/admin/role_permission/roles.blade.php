@@ -46,9 +46,9 @@
                                                     <path fill="#BDBDBD" d="M21.92 11.6C19.9 6.91 16.1 4 12 4s-7.9 2.91-9.92 7.6a1 1 0 000 .8C4.1 17.09 7.9 20 12 20s7.9-2.91 9.92-7.6a1 1 0 000-.8zM12 18c-3.17 0-6.17-2.29-7.9-6C5.83 8.29 8.83 6 12 6s6.17 2.29 7.9 6c-1.73 3.71-4.73 6-7.9 6zm0-10a4 4 0 100 8 4 4 0 000-8zm0 6a2 2 0 110-4 2 2 0 010 4z" />
                                                 </svg>
                                             </button>
-                                            <button onclick='editRole({{  $roll->id }})'><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                                            <!-- <button onclick='editRole({{  $roll->id }})'><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                                                     <path fill="#BDBDBD" d="M5 18h4.24a1 1 0 00.71-.29l6.92-6.93L19.71 8a1 1 0 000-1.42l-4.24-4.29a1 1 0 00-1.42 0l-2.82 2.83-6.94 6.93a.999.999 0 00-.29.71V17a1 1 0 001 1zm9.76-13.59l2.83 2.83-1.42 1.42-2.83-2.83 1.42-1.42zM6 13.17l5.93-5.93 2.83 2.83L8.83 16H6v-2.83zM21 20H3a1 1 0 100 2h18a1 1 0 000-2z" />
-                                                </svg>
+                                                </svg> -->
 
                                             </button> <button onclick='deleteRole({{ $roll->id }})'><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                                                     <path fill="#EB5757" d="M10 16.8a1 1 0 001-1v-6a1 1 0 00-2 0v6a1 1 0 001 1zm10-12h-4v-1a3 3 0 00-3-3h-2a3 3 0 00-3 3v1H4a1 1 0 000 2h1v11a3 3 0 003 3h8a3 3 0 003-3v-11h1a1 1 0 100-2zm-10-1a1 1 0 011-1h2a1 1 0 011 1v1h-4v-1zm7 14a1 1 0 01-1 1H8a1 1 0 01-1-1v-11h10v11zm-3-1a1 1 0 001-1v-6a1 1 0 00-2 0v6a1 1 0 001 1z" />
@@ -184,33 +184,9 @@
                             </div>
                         </div>
                         <br><br><br><br><br>
-                        @php $i = 1; @endphp
-                        @foreach($permission_groups as $group)
-                        <div class="row">
-                            <div class="col-4">
-                                <div class="form-check form-check-inline form-input">
-                                    <input class="form-check-input" type="checkbox" id="{{ $i }}management"  value="{{$group->name}}" onclick="checkpermissionByGroup('role-{{ $i }}-management-checkbox', this)">
-                                    <label class="form-check-label" >{{$group->name}}</label>
-                                </div>
-                            </div>
-                            <div class="col-8 role-{{ $i }}-management-checkbox">
-                                @php
-                                 $permissions = DB::table('permissions')->select('name','id')->where('group_name',$group->name)->get();
-                                  $j = 1; 
-                                @endphp
-                                @foreach($permissions as $value)
-                                <div class="col-6 ">
-                                    <div class="form-check form-check-inline form-input">
-                                        <input class="form-check-input" type="checkbox" id="e_permission{{$value->id}}"  name="e_permission[]" value="{{$value->name}}">
-                                        <label class="form-check-label" >{{$value->name}}</label>
-                                    </div>
-                                </div>
-                                @php $j++; @endphp
-                                @endforeach
-                            </div>
-                        </div>
-                        @php $i++; @endphp
-                        @endforeach
+                        <span id="multicakbox">
+                        
+                        </span>
 
                     </div>
                 </div>
@@ -364,14 +340,7 @@
                                 <path fill="#BDBDBD"
                                     d="M21.92 11.6C19.9 6.91 16.1 4 12 4s-7.9 2.91-9.92 7.6a1 1 0 000 .8C4.1 17.09 7.9 20 12 20s7.9-2.91 9.92-7.6a1 1 0 000-.8zM12 18c-3.17 0-6.17-2.29-7.9-6C5.83 8.29 8.83 6 12 6s6.17 2.29 7.9 6c-1.73 3.71-4.73 6-7.9 6zm0-10a4 4 0 100 8 4 4 0 000-8zm0 6a2 2 0 110-4 2 2 0 010 4z" />
                             </svg>
-                        </button>
-                            <button  onclick='editRole(${response.data.id})'><svg xmlns="http://www.w3.org/2000/svg" width="24"
-                                height="24" fill="none" viewBox="0 0 24 24">
-                                <path fill="#BDBDBD"
-                                    d="M5 18h4.24a1 1 0 00.71-.29l6.92-6.93L19.71 8a1 1 0 000-1.42l-4.24-4.29a1 1 0 00-1.42 0l-2.82 2.83-6.94 6.93a.999.999 0 00-.29.71V17a1 1 0 001 1zm9.76-13.59l2.83 2.83-1.42 1.42-2.83-2.83 1.42-1.42zM6 13.17l5.93-5.93 2.83 2.83L8.83 16H6v-2.83zM21 20H3a1 1 0 100 2h18a1 1 0 000-2z" />
-                            </svg>
-
-                        </button>
+                        
                         <button onclick='deleteRole(${response.data.id})'><svg xmlns="http://www.w3.org/2000/svg" width="24"
                                 height="24" fill="none" viewBox="0 0 24 24">
                                 <path fill="#EB5757"
@@ -453,13 +422,34 @@
                     $('#e_role').val(response.role.name);
                     // $('#e_permission').val(response.data.permission);
                     //$('#e_permission').prop('checked', true);
-                    $('#e_permission').empty();
-                    $.each(response.rolepermission, function (key, value) {
-                       // console.log(value);
+                    $('#multicakbox').empty();
+                    $.each(response.permissions, function (key, gname) {
+                        console.log(gname.permission_name);
                         //$('#e_permission').append(`<span>${value}</span>,&nbsp;&nbsp;`);
-                        $('#e_permission').prop('checked', true);
+                        //$('#e_permission').prop('checked', true);
+                        $('#multicakbox').append(` <div class="row ">
+                            <div class="col-4">
+                                <div class="form-check form-check-inline form-input">
+                                    <input class="form-check-input" type="checkbox" id="${key}management"  value="${gname.name}"} onclick="checkpermissionByGroup('role-${key}-management-checkbox', this)">
+                                    <label class="form-check-label" >${gname.name}</label>
+                                </div>
+                            </div>
+                            <div class="col-8 role management-checkbox">
+                            ${
+                            $.map(gname.permission_name, function( pname) {
+                                return[
+                                `<div class="col-6">
+                                    <div class="form-check form-check-inline form-input">
+                                        <input class="form-check-input" type="checkbox"  id="e_permission${pname.id}"  name="e_permission[]" value="${pname}">
+                                        <label class="form-check-label" >${pname}</label>
+                                    </div>
+                                </div>
+    
+                            </div>`
+                                ]})}
+                        </div>`);
 
-                    })
+                    });
                     $('#hidden_id').val(response.role.id);
                     $('#roleEditModal').modal('show');
 
@@ -491,13 +481,7 @@
                                         d="M21.92 11.6C19.9 6.91 16.1 4 12 4s-7.9 2.91-9.92 7.6a1 1 0 000 .8C4.1 17.09 7.9 20 12 20s7.9-2.91 9.92-7.6a1 1 0 000-.8zM12 18c-3.17 0-6.17-2.29-7.9-6C5.83 8.29 8.83 6 12 6s6.17 2.29 7.9 6c-1.73 3.71-4.73 6-7.9 6zm0-10a4 4 0 100 8 4 4 0 000-8zm0 6a2 2 0 110-4 2 2 0 010 4z" />
                                 </svg>
                             </button>
-                            <button  onclick='editRole(${response.data.id})'><svg xmlns="http://www.w3.org/2000/svg" width="24"
-                                    height="24" fill="none" viewBox="0 0 24 24">
-                                    <path fill="#BDBDBD"
-                                        d="M5 18h4.24a1 1 0 00.71-.29l6.92-6.93L19.71 8a1 1 0 000-1.42l-4.24-4.29a1 1 0 00-1.42 0l-2.82 2.83-6.94 6.93a.999.999 0 00-.29.71V17a1 1 0 001 1zm9.76-13.59l2.83 2.83-1.42 1.42-2.83-2.83 1.42-1.42zM6 13.17l5.93-5.93 2.83 2.83L8.83 16H6v-2.83zM21 20H3a1 1 0 100 2h18a1 1 0 000-2z" />
-                                </svg>
-
-                            </button>
+                            
                             <button onclick='deleteRole(${response.data.id})'><svg xmlns="http://www.w3.org/2000/svg" width="24"
                                     height="24" fill="none" viewBox="0 0 24 24">
                                     <path fill="#EB5757"
@@ -532,13 +516,7 @@
 
                 }, //success end
 
-                // beforeSend: function() {
-                //     $('#updateEducationInfo').modal('hide');
-                //     $('.ajax_loader').show()
-                // },
-                // complete: function() {
-                //     $('.ajax_loader').hide();
-                // }
+               
             });
         });
 

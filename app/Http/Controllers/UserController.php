@@ -4,24 +4,40 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\User;
+use Spatie\Permission\Models\Role;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
+use DB;
 
 
 class UserController extends Controller
 {
+    function __construct()
+    {
+         $this->middleware('permission:admin-view|admin-create|admin-edit|admin-delete', ['only' => ['users','userStore']]);
+         $this->middleware('permission:admin-create', ['only' => ['userStore','registerNewUser']]);
+         $this->middleware('permission:admin-edit', ['only' => ['userEdit','userUpdate','changeAdminStatus']]);
+         $this->middleware('permission:admin-delete', ['only' => ['userDelete']]);
+    }
+
+
+
 public function users(){
 	$users=User::where('is_super_admin','!=',1)->get();
-	return view('admin.user_management.users',compact('users'));
+    $roles = Role::all();
+    //  dd($roles);
+	return view('admin.user_management.users',compact('users', 'roles'));
 }
 public function userStore(Request $request){
+     //dd($request->all());
 	 $validator = Validator::make($request->all(), [
             'name'        => 'required|max:50',
             'email'       => 'required|max:50|email|unique:users',
+            'roles' => 'required'
         ]);
         if ($validator->fails()) {
             $data          = array();
@@ -41,6 +57,7 @@ public function userStore(Request $request){
                 'password'    => Hash::make(Str::random(10)),
                 'is_admin'    => $request->admin??0,
             ]);
+        $user->assignRole($request->input('roles'));
 
              // send email
         // Mail::to($request->email)->send(new UserInvitation($invite));
@@ -48,7 +65,7 @@ public function userStore(Request $request){
                 $message->to($request->email);
                 $message->subject('Register your free account');
             });
-
+            //dd('hello');
          $data                = array();
             $data['message']     = $user->is_admin==1?'Admin added successfully':'User added successfully';
             $data['name']        = $user->name;
@@ -180,11 +197,15 @@ public function userStore(Request $request){
 
 
 public function userEdit(Request $request){
-        $data = User::find($request->id);
-            if ($data) {
+        $user = User::find($request->id);
+        $roles = Role::pluck('name','name')->all();
+        $userRole = $user->roles->pluck('name','name')->all();
+        // dd($userRole);
+            if ($user) {
                 return response()->json([
                     'success' => true,
-                    'data'    => $data,
+                    'data'    => $user,
+                    'userRole'=> $userRole,
                 ]);
             } else {
                 return response()->json([
@@ -194,6 +215,7 @@ public function userEdit(Request $request){
             }
 }
 public function userUpdate(Request $request){
+        // dd($request->all());
         $user  = User::find($request->hidden_id);
         $validator = Validator::make($request->all(), [
             'name'        => 'required|max:50',
@@ -201,6 +223,7 @@ public function userUpdate(Request $request){
             'contact'       => 'required|max:50',
             'gender'       => 'required',
             'image'       => 'nullable|max:600|mimes:jpg,png,jpeg|dimensions:width=200px,height=200px',
+
         ]);
         if ($validator->fails()) {
             $data          = array();
@@ -243,10 +266,11 @@ public function userUpdate(Request $request){
                 'photo'       => $profile_image_image_url,
                 'is_admin'    => $request->admin??0,
             ]);
-            
+
+            DB::table('model_has_roles')->where('model_id',$request->hidden_id)->delete();
+            $user->assignRole($request->input('roles'));
 
             $data                = array();
-            
             $data['message']     = $user->is_admin==1?'Admin info updated successfully':'User info updated successfully';
             // $data['image']        = $user->image;
             $data['name']        = $user->name;

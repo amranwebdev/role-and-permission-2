@@ -7,6 +7,9 @@ use App\Http\Controllers\SettingsController;
 use App\Http\Controllers\ForgotPasswordController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RoleController;
+use App\Http\Controllers\BlogController;
+use App\Http\Controllers\PermissionGroupController;
+use App\Http\Controllers\PermissionController;
 
 /*
 |--------------------------------------------------------------------------
@@ -32,12 +35,12 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth']], function () {
 	Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
 	// user  start
-	Route::get('/users', [UserController::class, 'users'])->name('users');
-	Route::post('/user/store', [UserController::class, 'userStore'])->name('user.store');
-	Route::post('/user/edit', [UserController::class, 'userEdit'])->name('user.edit');
-	Route::post('/user/update/', [UserController::class, 'userUpdate'])->name('user.update');
-	Route::post('/user/delete', [UserController::class, 'userDelete'])->name('user.delete');
-	Route::post('/change/admin/status', [UserController::class, 'changeAdminStatus'])->name('is.admin');
+	Route::get('/users', [UserController::class, 'users'])->name('users')->middleware('role:Superadmin');
+	Route::post('/user/store', [UserController::class, 'userStore'])->name('user.store')->middleware('role:Superadmin');
+	Route::post('/user/edit', [UserController::class, 'userEdit'])->name('user.edit')->middleware('role:Superadmin');
+	Route::post('/user/update/', [UserController::class, 'userUpdate'])->name('user.update')->middleware('role:Superadmin');
+	Route::post('/user/delete', [UserController::class, 'userDelete'])->name('user.delete')->middleware('role:Superadmin');
+	Route::post('/change/admin/status', [UserController::class, 'changeAdminStatus'])->name('is.admin')->middleware('role:Superadmin');
 	// user end
 
 	// admin start
@@ -57,15 +60,36 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth']], function () {
 	Route::post('/settings/edit', [SettingsController::class, 'settingsEdit'])->name('settings.edit');
 	Route::post('/settings/update/', [SettingsController::class, 'settingsUpdate'])->name('settings.update');
 	// app settings end
+	//Tags Start
+	Route::get('/blogs', [BlogController::class, 'alltags'])->name('blogs');
+	Route::post('/blogs/store', [BlogController::class, 'tagStore'])->name('blogs.store');
+	Route::post('/blogs/edit', [BlogController::class, 'tagEdit'])->name('blogs.edit');
+	Route::post('/blogs/update', [BlogController::class, 'tagUpdated'])->name('blogs.update');
+	Route::post('/blogs/destroy', [BlogController::class, 'tagDestrotoy'])->name('blogs.destroy');
+	//Tags End
 
 	// =========Role And Permission Start============
+	// Permission Group start
+	Route::get('/permission/groups', [PermissionGroupController::class, 'Index'])->name('permission.groups')->middleware('role:Superadmin');
+	Route::post('/permission/groups/store', [PermissionGroupController::class, 'Store'])->name('permission.groups.store')->middleware('role:Superadmin');
+	Route::post('/permission/groups/edit', [PermissionGroupController::class, 'Edit'])->name('permission.groups.edit')->middleware('role:Superadmin');
+	Route::post('/permission/groups/update/', [PermissionGroupController::class, 'Update'])->name('permission.groups.update')->middleware('role:Superadmin');
+	Route::post('/permission/groups/destroy', [PermissionGroupController::class, 'Destroy'])->name('permission.groups.destroy')->middleware('role:Superadmin');
+	// Permission Group  end
+	// Permission start
+	Route::get('/permissions', [PermissionController::class, 'Index'])->name('permissions')->middleware('role:Superadmin');
+	Route::post('/permissions/store', [PermissionController::class, 'Store'])->name('permissions.store')->middleware('role:Superadmin');
+	Route::post('/permissions/edit', [PermissionController::class, 'Edit'])->name('permissions.edit')->middleware('role:Superadmin');
+	Route::post('/permissions/update/', [PermissionController::class, 'Update'])->name('permissions.update')->middleware('role:Superadmin');
+	Route::post('/permissions/destroy', [PermissionController::class, 'Destroy'])->name('permissions.destroy')->middleware('role:Superadmin');
+	// Permission end
 	// Role start
-	Route::get('/roles/with/permission', [RoleController::class, 'Index'])->name('roles.with.permission');
-	Route::post('/roles/with/permission/store', [RoleController::class, 'Store'])->name('roles.with.permission.store');
-	Route::post('/roles/with/permission/edit', [RoleController::class, 'Edit'])->name('roles.with.permission.edit');
-	Route::post('/roles/with/permission/update/', [RoleController::class, 'Update'])->name('roles.with.permission.update');
-	Route::post('/roles/with/permission/destroy', [RoleController::class, 'Destroy'])->name('roles.with.permission.destroy');
-	// admin  end
+	Route::get('/roles/with/permission', [RoleController::class, 'Index'])->name('roles.with.permission')->middleware('role:Superadmin');
+	Route::post('/roles/with/permission/store', [RoleController::class, 'Store'])->name('roles.with.permission.store')->middleware('role:Superadmin');
+	Route::post('/roles/with/permission/edit', [RoleController::class, 'Edit'])->name('roles.with.permission.edit')->middleware('role:Superadmin');
+	Route::post('/roles/with/permission/update/', [RoleController::class, 'Update'])->name('roles.with.permission.update')->middleware('role:Superadmin');
+	Route::post('/roles/with/permission/destroy', [RoleController::class, 'Destroy'])->name('roles.with.permission.destroy')->middleware('role:Superadmin');
+	// Role  end
 	// =========Role And Permission End============
 });
 

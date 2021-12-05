@@ -27,7 +27,7 @@ class AuthServiceProvider extends ServiceProvider
 
         //by these line of codes admin can access every single right
         Gate::before(function ($user, $ability) {
-            if ($user->hasRole('Admin')) {
+            if ($user->hasRole('Superadmin')) {
                 return true;
             }
         });
